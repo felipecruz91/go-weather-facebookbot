@@ -1,0 +1,14 @@
+language: go
+
+matrix:
+  include:
+    - go: 1.6.3
+    - go: 1.7.5
+    - go: 1.8
+
+before_install:
+  - go get -v github.com/gorilla/mux
+  - go get -v github.com/bitly/go-simplejson
+
+script:
+  - go test ./...
