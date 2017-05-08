@@ -1,14 +1,15 @@
 language: go
 
-matrix:
-  include:
-    - go: 1.6.3
-    - go: 1.7.5
-    - go: 1.8
+go:
+  - 1.8.x
+  - tip
 
 before_install:
   - go get -v github.com/gorilla/mux
   - go get -v github.com/bitly/go-simplejson
 
 script:
-  - go test ./...
+  - go test -race -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)  

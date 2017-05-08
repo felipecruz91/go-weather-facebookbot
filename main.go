@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"time"
 
+	"io"
+
 	"github.com/bitly/go-simplejson"
 	"github.com/gorilla/mux"
 )
@@ -105,6 +107,12 @@ func MakeQuery(weatherUrl string) (w *WeatherInfo) {
 	return
 }
 
+func HealthCheckEndpoint(w http.ResponseWriter, req *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	io.WriteString(w, `{"alive": true}`)
+}
+
 //WebhookEndpoint - HTTP Request Handler for /webhook
 func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 
@@ -135,6 +143,7 @@ func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	router := mux.NewRouter()
+	router.HandleFunc("/healthcheck", HealthCheckEndpoint).Methods("GET")
 	router.HandleFunc("/webhook", WebhookEndpoint).Methods("POST")
 	log.Fatal(http.ListenAndServe(":5000", router))
 }
