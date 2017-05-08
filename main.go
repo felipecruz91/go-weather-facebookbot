@@ -117,7 +117,10 @@ func HealthCheckEndpoint(w http.ResponseWriter, req *http.Request) {
 //WebhookEndpoint - HTTP Request Handler for /webhook
 func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 
-	if req.Method == "POST" {
+	if req.Method == "GET" {
+		// Not sure but I think it is needed to validate webhook from Facebook
+		w.WriteHeader(http.StatusOK)
+	} else if req.Method == "POST" {
 		decoder := json.NewDecoder(req.Body)
 
 		var t APIAIRequest
@@ -156,6 +159,6 @@ func GetPortOrDefault(defaultPort string) string {
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/healthcheck", HealthCheckEndpoint).Methods("GET")
-	router.HandleFunc("/webhook", WebhookEndpoint).Methods("POST")
+	router.HandleFunc("/webhook", WebhookEndpoint).Methods("GET", "POST")
 	log.Fatal(http.ListenAndServe(":"+GetPortOrDefault("4747"), router))
 }
