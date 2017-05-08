@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"io"
@@ -141,9 +142,20 @@ func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// Get the Port from the environment so we can run on Heroku
+func GetPortOrDefault(defaultPort string) string {
+	var port = os.Getenv("PORT")
+	// Set a default port if there is nothing in the environment
+	if port == "" {
+		port = defaultPort
+		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+	}
+	return port
+}
+
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/healthcheck", HealthCheckEndpoint).Methods("GET")
 	router.HandleFunc("/webhook", WebhookEndpoint).Methods("POST")
-	log.Fatal(http.ListenAndServe(":5000", router))
+	log.Fatal(http.ListenAndServe(":"+GetPortOrDefault("4747"), router))
 }
