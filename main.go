@@ -119,7 +119,18 @@ func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 
 	if req.Method == "GET" {
 		// Not sure but I think it is needed to validate webhook from Facebook
-		w.WriteHeader(http.StatusOK)
+		hubmode := req.URL.Query().Get("hub.mode")
+		verifyToken := req.URL.Query().Get("hub.verify_token")
+		hubchallenge := req.URL.Query().Get("hub.challenge")
+
+		fmt.Printf("Validating webhook. hubmode %s verifyToken: %s hubchallenge: %s", hubmode, verifyToken, hubchallenge)
+
+		if hubmode == "subscribe" && verifyToken == "123456" {
+			w.WriteHeader(http.StatusOK)
+			io.WriteString(w, hubchallenge)
+		} else {
+			http.Error(w, "Failed validation. Make sure the validation tokens match.", http.StatusForbidden)
+		}
 	} else if req.Method == "POST" {
 		decoder := json.NewDecoder(req.Body)
 
