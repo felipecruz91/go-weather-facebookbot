@@ -132,6 +132,8 @@ func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "Failed validation. Make sure the validation tokens match.", http.StatusForbidden)
 		}
 	} else if req.Method == "POST" {
+
+		log.Printf("req.Body:  %s", req.Body)
 		decoder := json.NewDecoder(req.Body)
 
 		var t APIAIRequest
@@ -146,8 +148,10 @@ func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 		z := MakeQuery(queryURL)
 		if w == nil {
 			fmt.Printf("Program Error")
+			log.Printf("Program Error")
 		} else {
 			fmt.Printf("Temperature: %s %s, %s, Humidity: %s", z.Temp, z.Tp, z.Weth, z.Humidity)
+			log.Printf("Temperature: %s %s, %s, Humidity: %s", z.Temp, z.Tp, z.Weth, z.Humidity)
 			msg := APIAIMessage{Source: "Weather Agent System", Speech: "Temperature: " + z.Temp + z.Tp, DisplayText: "Temperature: " + z.Temp + z.Tp}
 			json.NewEncoder(w).Encode(msg)
 		}
