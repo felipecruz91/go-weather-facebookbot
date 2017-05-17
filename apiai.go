@@ -6,27 +6,26 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 )
 
 const apiEndpoint string = "https://api.api.ai/v1/%s?v=%s"
 const apiVersion string = "20150910"
-const apiAccessToken string = ""
+
+var apiAccessToken = os.Getenv("APIAI_ACCESS_TOKEN")
 
 //APIAIRequest : Incoming request format from APIAI
 type APIAIRequest struct {
 	ID        string    `json:"id"`
 	Timestamp time.Time `json:"timestamp"`
 	Result    struct {
-		Source           string `json:"source"`
-		ResolvedQuery    string `json:"resolvedQuery"`
-		Action           string `json:"action"`
-		ActionIncomplete bool   `json:"actionIncomplete"`
-		// Parameters       struct {
-		// 	Name string `json:"name"`
-		// } `json:"parameters"`
-		Parameters map[string]string `json:"parameters"`
-		Contexts   []struct {
+		Source           string            `json:"source"`
+		ResolvedQuery    string            `json:"resolvedQuery"`
+		Action           string            `json:"action"`
+		ActionIncomplete bool              `json:"actionIncomplete"`
+		Parameters       map[string]string `json:"parameters"`
+		Contexts         []struct {
 			Name       string `json:"name"`
 			Parameters struct {
 				Name string `json:"name"`

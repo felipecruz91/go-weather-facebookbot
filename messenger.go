@@ -77,6 +77,8 @@ type SendMessage struct {
 	} `json:"message"`
 }
 
+const FacebookEndPoint = "https://graph.facebook.com/v2.6/me/messages"
+
 func sendTextMessage(event Messaging) {
 
 	// Send request from FB to API.AI

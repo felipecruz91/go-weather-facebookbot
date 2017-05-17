@@ -11,12 +11,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//TODO: Define these in Heroku
 var accessToken = os.Getenv("ACCESS_TOKEN")
 var verifyToken = os.Getenv("VERIFY_TOKEN")
 var port = os.Getenv("PORT")
-
-const FacebookEndPoint = "https://graph.facebook.com/v2.6/me/messages"
 
 func verifyTokenAction(w http.ResponseWriter, req *http.Request) {
 
@@ -27,7 +24,6 @@ func verifyTokenAction(w http.ResponseWriter, req *http.Request) {
 	//TODO: Update verify token
 	if hubmode == "subscribe" && token == verifyToken {
 		log.Print("verify token success.")
-
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, hubchallenge)
 	} else {
@@ -50,9 +46,7 @@ func webhookPostAction(w http.ResponseWriter, req *http.Request) {
 
 	messagingEvents := receivedMessage.Entry[0].Messaging
 	for _, event := range messagingEvents {
-
 		if &event.Message != nil && event.Message.Text != "" && !event.Message.IsEcho {
-
 			sendTextMessage(event)
 		}
 	}
