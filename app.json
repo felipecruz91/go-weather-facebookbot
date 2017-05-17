@@ -1,0 +1,7 @@
+{
+  "name": "Golang Weather Facebook Bot",
+  "description": "A Golang app which interacts with Facebook Bot and API.AI to give you information about  the weather of any city.",
+  "repository": "https://github.com/felipecruz91/go-weather-facebookbot",
+  "logo": "",
+  "keywords": ["golang", "facebook", "bot", "weather", "apiai"]
+}
