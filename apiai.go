@@ -120,7 +120,8 @@ func HandleRequestFromApiAi(w http.ResponseWriter, req *http.Request) {
 			fmt.Printf("Program Error")
 			log.Printf("Program Error")
 		} else {
-			msg := APIAIMessage{Source: "Weather Agent System", Speech: "Temperature: " + z.Temp + z.Tp, DisplayText: "Temperature: " + z.Temp + z.Tp}
+			apiResponseText := "The weather in " + city + " is " + z.Temp + "º" + z.Tp + " and " + z.Humidity + "%"
+			msg := APIAIMessage{Source: "Weather Agent System", Speech: apiResponseText, DisplayText: apiResponseText}
 			json.NewEncoder(w).Encode(msg)
 		}
 
