@@ -9,30 +9,34 @@ import (
 	simplejson "github.com/bitly/go-simplejson"
 )
 
+// WeatherInfo struct
 type WeatherInfo struct {
 	Temp     string
+	Scale    string
 	Humidity string
-	Weth     string
-	Units
+	Text     string
+	Code     string
 }
 
-type Units struct {
-	Tp string
-}
+const yahooWeatherAPIURL = "https://query.yahooapis.com/v1/public/yql"
 
-func BuildUrl(loc string) (urlParsed string) {
-	Url, _ := url.Parse("https://query.yahooapis.com/v1/public/yql")
+// BuildWeatherURL builds the Yahoo API weather URL
+func BuildWeatherURL(city string) (urlParsed string) {
+	URL, _ := url.Parse(yahooWeatherAPIURL)
 	parameters := url.Values{}
-	parameters.Add("q", "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\""+loc+"\")  and u='c'")
+	parameters.Add("q", "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\""+city+"\")  and u='c'")
 	parameters.Add("format", "json")
-	Url.RawQuery = parameters.Encode()
-	urlParsed = Url.String()
+	URL.RawQuery = parameters.Encode()
+	urlParsed = URL.String()
 	return
 }
 
-func MakeQuery(weatherUrl string) (w *WeatherInfo) {
+// RequestWeather performs a call to the Yahoo Weather API and returns the weather information.
+func RequestWeather(city string) (w *WeatherInfo) {
 
-	resp, err := http.Get(weatherUrl)
+	weatherURL := BuildWeatherURL(city)
+
+	resp, err := http.Get(weatherURL)
 	if err != nil {
 		fmt.Println("Connected Error")
 		return nil
@@ -51,11 +55,11 @@ func MakeQuery(weatherUrl string) (w *WeatherInfo) {
 		return nil
 	}
 
-	//parse json
-	w = new(WeatherInfo)
-	w.Tp, _ = js.Get("query").Get("results").Get("channel").Get("units").Get("temperature").String()
-	w.Temp, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("temp").String()
-	w.Weth, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("text").String()
-	w.Humidity, _ = js.Get("query").Get("results").Get("channel").Get("atmosphere").Get("humidity").String()
+	weatherInfo := new(WeatherInfo)
+	weatherInfo.Temp, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("temp").String()
+	weatherInfo.Scale, _ = js.Get("query").Get("results").Get("channel").Get("units").Get("temperature").String()
+	weatherInfo.Humidity, _ = js.Get("query").Get("results").Get("channel").Get("atmosphere").Get("humidity").String()
+	weatherInfo.Text, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("text").String()
+	weatherInfo.Code, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("code").String()
 	return
 }

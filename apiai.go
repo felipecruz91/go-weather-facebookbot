@@ -114,13 +114,13 @@ func HandleRequestFromApiAi(w http.ResponseWriter, req *http.Request) {
 	if t.Result.Action == "weather" {
 
 		city := t.Result.Parameters["location"]
-		queryURL := BuildUrl(city)
-		z := MakeQuery(queryURL)
+
+		z := RequestWeather(city)
 		if w == nil {
 			fmt.Printf("Program Error")
 			log.Printf("Program Error")
 		} else {
-			apiResponseText := "The weather in " + city + " is " + z.Temp + "º" + z.Tp + " and " + z.Humidity + "% humidity."
+			apiResponseText := "The weather in " + city + " is " + z.Temp + "º" + z.Scale + " and " + z.Humidity + "% humidity."
 			msg := APIAIMessage{Source: "Weather Agent System", Speech: apiResponseText, DisplayText: apiResponseText}
 			json.NewEncoder(w).Encode(msg)
 		}
