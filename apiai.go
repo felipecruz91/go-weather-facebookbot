@@ -117,7 +117,7 @@ func HandleRequestFromApiAi(w http.ResponseWriter, req *http.Request) {
 			log.Printf("Program Error")
 		} else {
 			emoji := ResolveEmoji(z.Code)
-			apiResponseText := "The weather in " + city + " is " + z.Text + " " + emoji + ". The temperature is " + z.Temp + "º" + z.Scale + " and " + z.Humidity + "% humidity."
+			apiResponseText := "The weather in " + city + " is " + z.Text + " " + emoji + "! The temperature is " + z.Temp + "º" + z.Scale + " and " + z.Humidity + "% humidity."
 			msg := APIAIMessage{Source: "Weather Agent System", Speech: apiResponseText, DisplayText: apiResponseText}
 			json.NewEncoder(w).Encode(msg)
 		}
@@ -130,19 +130,19 @@ func ResolveEmoji(weatherCode string) (emoji string) {
 
 	switch weatherCode {
 	case "11", "12":
-		return ":cloud_rain:"
+		return "🌧️☔"
 	case "16":
-		return ":snowflake:"
+		return "🌨️❄️"
 	case "20":
-		return ":fog:"
+		return "🌫️"
 	case "24":
-		return ":dash:"
+		return "💨"
 	case "25":
-		return "cold"
+		return "🐧🐧"
 	case "32":
 		return "☀️"
 	case "36":
-		return ":fire:"
+		return "🔥🔥"
 	default:
 		fmt.Printf("%s.", weatherCode)
 		return ""
