@@ -108,15 +108,11 @@ func HandleRequestFromApiAi(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Error in decoding the Request data", http.StatusInternalServerError)
 	}
 
-	fmt.Println(t.Result.Action)
-	fmt.Println(t.Result.Parameters["location"])
-
 	if t.Result.Action == "weather" {
 
 		city := t.Result.Parameters["location"]
-
 		z := RequestWeather(city)
-		if w == nil {
+		if z == nil {
 			fmt.Printf("Program Error")
 			log.Printf("Program Error")
 		} else {

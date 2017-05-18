@@ -56,10 +56,12 @@ func RequestWeather(city string) (w *WeatherInfo) {
 	}
 
 	weatherInfo := new(WeatherInfo)
+
 	weatherInfo.Temp, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("temp").String()
 	weatherInfo.Scale, _ = js.Get("query").Get("results").Get("channel").Get("units").Get("temperature").String()
 	weatherInfo.Humidity, _ = js.Get("query").Get("results").Get("channel").Get("atmosphere").Get("humidity").String()
 	weatherInfo.Text, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("text").String()
 	weatherInfo.Code, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("code").String()
-	return
+
+	return weatherInfo
 }
