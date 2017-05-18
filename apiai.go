@@ -140,7 +140,7 @@ func ResolveEmoji(weatherCode string) (emoji string) {
 	case "25":
 		return "cold"
 	case "32":
-		return ":sunny:"
+		return "☀️"
 	case "36":
 		return ":fire:"
 	default:
