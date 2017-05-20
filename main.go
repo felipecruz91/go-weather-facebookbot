@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -64,6 +65,33 @@ func APIAiHandler(w http.ResponseWriter, req *http.Request) {
 
 			json.NewEncoder(w).Encode(msg)
 		}
+	}
+
+	if t.Result.Action == "forecast" {
+
+		city := t.Result.Parameters["location"]
+		duration := t.Result.Parameters["duration"]
+
+		forecast := RequestForecast(city, duration)
+
+		var buffer bytes.Buffer
+		for _, element := range forecast {
+			item := element.Item.Forecast
+			emoji := ResolveEmoji(item.Code)
+			buffer.WriteString(item.Date + " " + item.Text + " " + emoji)
+		}
+
+		apiResponseText := fmt.Sprintf(
+			"The forecast in %s for the next %s days is: \n %s",
+			city, duration, buffer.String())
+
+		msg := APIAIMessage{
+			Source:      "Weather Agent System",
+			Speech:      apiResponseText,
+			DisplayText: apiResponseText,
+		}
+
+		json.NewEncoder(w).Encode(msg)
 	}
 }
 

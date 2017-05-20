@@ -1,10 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 
 	simplejson "github.com/bitly/go-simplejson"
 )
@@ -18,6 +22,32 @@ type WeatherInfo struct {
 	Code     string
 }
 
+// YahooAPIResponse struct
+type YahooAPIResponse struct {
+	Query struct {
+		Count   int       `json:"count"`
+		Created time.Time `json:"created"`
+		Lang    string    `json:"lang"`
+		Results struct {
+			Channel []Channel `json:"channel"`
+		} `json:"results"`
+	} `json:"query"`
+}
+
+// Channel struct
+type Channel struct {
+	Item struct {
+		Forecast struct {
+			Code string `json:"code"`
+			Date string `json:"date"`
+			Day  string `json:"day"`
+			High string `json:"high"`
+			Low  string `json:"low"`
+			Text string `json:"text"`
+		} `json:"forecast"`
+	} `json:"item"`
+}
+
 const yahooWeatherAPIURL = "https://query.yahooapis.com/v1/public/yql"
 
 // BuildWeatherURL builds the Yahoo API weather URL
@@ -25,6 +55,16 @@ func BuildWeatherURL(city string) (urlParsed string) {
 	URL, _ := url.Parse(yahooWeatherAPIURL)
 	parameters := url.Values{}
 	parameters.Add("q", "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text=\""+city+"\")  and u='c'")
+	parameters.Add("format", "json")
+	URL.RawQuery = parameters.Encode()
+	urlParsed = URL.String()
+	return
+}
+
+func BuildForecastURL(city string, duration string) (urlParsed string) {
+	URL, _ := url.Parse(yahooWeatherAPIURL)
+	parameters := url.Values{}
+	parameters.Add("q", "select item.forecast from weather.forecast(0,"+duration+") where woeid in (select woeid from geo.places(1) where text=\""+city+"\")  and u='c'")
 	parameters.Add("format", "json")
 	URL.RawQuery = parameters.Encode()
 	urlParsed = URL.String()
@@ -64,4 +104,34 @@ func RequestWeather(city string) (w *WeatherInfo) {
 	weatherInfo.Code, _ = js.Get("query").Get("results").Get("channel").Get("item").Get("condition").Get("code").String()
 
 	return weatherInfo
+}
+
+func RequestForecast(city string, duration string) (response []Channel) {
+
+	forecastURL := BuildForecastURL(city, duration)
+
+	resp, err := http.Get(forecastURL)
+	if err != nil {
+		fmt.Println("Connected Error")
+		return nil
+	}
+
+	defer resp.Body.Close()
+
+	yahooAPIResponse := new(YahooAPIResponse)
+	err2 := json.NewDecoder(resp.Body).Decode(yahooAPIResponse)
+	if err2 != nil {
+		log.Print(err2)
+	}
+
+	durationInt, err := strconv.Atoi(duration)
+
+	if durationInt > 10 {
+		durationInt = 10
+	}
+
+	var forecast []Channel
+	forecast = yahooAPIResponse.Query.Results.Channel[:durationInt]
+
+	return forecast
 }
