@@ -96,35 +96,6 @@ func SendTextToApiAi(text string) (APIAIRequest, error) {
 	return record, nil
 }
 
-// API.AI -> Weather
-func HandleRequestFromApiAi(w http.ResponseWriter, req *http.Request) {
-
-	decoder := json.NewDecoder(req.Body)
-
-	var t APIAIRequest
-	err := decoder.Decode(&t)
-	if err != nil {
-		log.Print(err)
-		http.Error(w, "Error in decoding the Request data", http.StatusInternalServerError)
-	}
-
-	if t.Result.Action == "weather" {
-
-		city := t.Result.Parameters["location"]
-		z := RequestWeather(city)
-		if z == nil {
-			fmt.Printf("Program Error")
-			log.Printf("Program Error")
-		} else {
-			emoji := ResolveEmoji(z.Code)
-			apiResponseText := "The weather in " + city + " is " + z.Text + " " + emoji + "! The temperature is " + z.Temp + "º" + z.Scale + " and " + z.Humidity + "% humidity."
-			msg := APIAIMessage{Source: "Weather Agent System", Speech: apiResponseText, DisplayText: apiResponseText}
-			json.NewEncoder(w).Encode(msg)
-		}
-
-	}
-}
-
 // ResolveEmoji converts the weather code into an emoji
 func ResolveEmoji(weatherCode string) (emoji string) {
 
