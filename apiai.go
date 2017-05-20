@@ -55,21 +55,20 @@ type APIAIMessage struct {
 	Source      string `json:"source"`
 }
 
-// Send request to API.AI
-func SendTextToApiAi(text string) (APIAIRequest, error) {
+// PerformRequestToAPIAi sends natural language text and information as query parameters to API.AI
+func PerformRequestToAPIAi(text string) (APIAIRequest, error) {
 
 	record := APIAIRequest{}
-	myUrl := fmt.Sprintf(apiEndpoint, "query", apiVersion)
-	myUrl = myUrl + "&query=" + url.QueryEscape(text) + "&lang=en" + "&sessionId=1234567890"
-
-	fmt.Println(myUrl)
+	myURL := fmt.Sprintf(apiEndpoint, "query", apiVersion)
+	myURL = myURL + "&query=" + url.QueryEscape(text) + "&lang=en" + "&sessionId=1234567890"
 
 	// Build the request
-	req, err := http.NewRequest("GET", myUrl, nil)
+	req, err := http.NewRequest("GET", myURL, nil)
 	if err != nil {
-		log.Fatal("NewRequest: ", err)
+		log.Fatalf("The /GET request to %s failed", myURL)
 		return record, err
 	}
+
 	// Replace authToken by your Client access token
 	authValue := "Bearer " + apiAccessToken
 	req.Header.Add("Authorization", authValue)
@@ -88,10 +87,6 @@ func SendTextToApiAi(text string) (APIAIRequest, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&record); err != nil {
 		log.Println(err)
 	}
-
-	fmt.Println("Status = ", record.Status.Code)
-	fmt.Println("ErrorType = ", record.Status.ErrorType)
-	fmt.Println("Response = ", record.Result.Fulfillment.Speech)
 
 	return record, nil
 }

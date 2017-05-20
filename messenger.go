@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -79,23 +78,11 @@ type SendMessage struct {
 
 const FacebookEndPoint = "https://graph.facebook.com/v2.6/me/messages"
 
-func sendTextMessage(event Messaging) {
+// SendMessageToBot sends a message to the Facebook bot
+func SendMessageToBot(botID string, response APIAIRequest) {
 
-	// Send request from FB to API.AI
-	response, err := SendTextToApiAi(event.Message.Text)
-	if err != nil {
-		fmt.Print(err)
-	} else {
-		fmt.Printf(response.Result.Fulfillment.Speech)
-	}
-
-	// Send request to FB with the data from API.AI
-	SendRequestToFacebook(event, response)
-}
-
-func SendRequestToFacebook(event Messaging, response APIAIRequest) {
 	recipient := new(Recipient)
-	recipient.ID = event.Sender.ID
+	recipient.ID = botID
 	sendMessage := new(SendMessage)
 	sendMessage.Recipient = *recipient
 	sendMessage.Message.Text = response.Result.Fulfillment.Speech
@@ -103,22 +90,23 @@ func SendRequestToFacebook(event Messaging, response APIAIRequest) {
 	if err != nil {
 		log.Print(err)
 	}
+
 	req, err := http.NewRequest("POST", FacebookEndPoint, bytes.NewBuffer(sendMessageBody))
 	if err != nil {
 		log.Print(err)
 	}
-	fmt.Println(req)
-	fmt.Println(err)
 
 	values := url.Values{}
 	values.Add("access_token", accessToken)
 	req.URL.RawQuery = values.Encode()
 	req.Header.Add("Content-Type", "application/json; charset=UTF-8")
+
 	client := &http.Client{Timeout: time.Duration(30 * time.Second)}
 	res, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
 	}
+
 	defer res.Body.Close()
 	var result map[string]interface{}
 	body, err := ioutil.ReadAll(res.Body)

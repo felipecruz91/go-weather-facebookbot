@@ -86,7 +86,16 @@ func WebhookEndpoint(w http.ResponseWriter, req *http.Request) {
 		messagingEvents := receivedMessage.Entry[0].Messaging
 		for _, event := range messagingEvents {
 			if &event.Message != nil && event.Message.Text != "" && !event.Message.IsEcho {
-				sendTextMessage(event)
+
+				// Send request to API.AI
+				response, err := PerformRequestToAPIAi(event.Message.Text)
+				if err != nil {
+					log.Print(err)
+				}
+
+				// Send response back to Facebook bot
+				botID := event.Sender.ID
+				SendMessageToBot(botID, response)
 			}
 		}
 	} else {
