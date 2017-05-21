@@ -6,7 +6,11 @@ A Golang app which interacts with Facebook Bot and API.AI to give you informatio
 
 ### Architecture
 
-![Architecture](https://image.ibb.co/k2xOCa/Architecture.png "Architecture")
+![Architecture](https://github.com/felipecruz91/go-weather-facebookbot/blob/master/images/Architecture.png "Architecture")
+
+## Demo
+
+![Demo](https://github.com/felipecruz91/go-weather-facebookbot/blob/master/images/Demo.gif "Demo")
 
 ### Deploy to Heroku
 
