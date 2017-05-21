@@ -78,7 +78,7 @@ func APIAiHandler(w http.ResponseWriter, req *http.Request) {
 		for _, element := range forecast {
 			item := element.Item.Forecast
 			emoji := ResolveEmoji(item.Code)
-			buffer.WriteString(item.Date + " " + item.Text + " " + emoji)
+			buffer.WriteString(item.Date + " " + item.Text + " " + emoji + "\n")
 		}
 
 		apiResponseText := fmt.Sprintf(
