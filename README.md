@@ -4,7 +4,9 @@ Golang Weather Facebook Bot
 
 A Golang app which interacts with Facebook Bot and API.AI to give you information about the weather of any city.
 
+### Architecture
 
+![Architecture](https://image.ibb.co/k2xOCa/Architecture.png "Architecture")
 
 ### Deploy to Heroku
 
