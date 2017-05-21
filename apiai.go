@@ -95,6 +95,8 @@ func PerformRequestToAPIAi(text string) (APIAIRequest, error) {
 func ResolveEmoji(weatherCode string) (emoji string) {
 
 	switch weatherCode {
+	case "4": // thunderstorms
+		return "⛈️⚡"
 	case "11", "12":
 		return "🌧️☔"
 	case "16":
@@ -105,10 +107,16 @@ func ResolveEmoji(weatherCode string) (emoji string) {
 		return "💨"
 	case "25":
 		return "🐧🐧"
+	case "28": // mostly cloudy (day)
+		return "☁️"
+		case "30": // partly cloudy (day)
+		return "⛅"
 	case "32":
 		return "☀️"
 	case "36":
 		return "🔥🔥"
+	case "38", "39": // scattered thunderstorms
+		return "⛈️"
 	default:
 		fmt.Printf("%s.", weatherCode)
 		return ""
