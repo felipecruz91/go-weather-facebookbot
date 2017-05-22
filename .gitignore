@@ -15,6 +15,3 @@
 
 # Visual Studio Code
 .vscode/*
-
-# Vendor
-vendor/.*
